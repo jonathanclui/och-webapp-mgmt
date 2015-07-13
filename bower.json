@@ -1,0 +1,21 @@
+{
+  "name": "och-management-site",
+  "version": "1.0.0",
+  "authors": [
+    "Jonathan Lui <lui.jonathanc@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "angular": "~1.4.2",
+    "angular-route": "~1.4.2",
+    "angular-animate": "~1.4.2"
+  }
+}

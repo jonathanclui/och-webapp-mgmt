@@ -1,0 +1,45 @@
+<div class="page-header">
+	<h1>
+		Social Events
+		<a href="/events/create" class="btn btn-default">
+			<span class="glyphicon glyphicon-plus"></span> 
+			New Social Event
+		</a>
+	</h1>
+
+</div>
+
+<div class="jumbotron text-center" ng-show="event.processing">
+	<span class="glyphicon glyphicon-repeat spinner"></span>
+	<p>Loading Events...</p>
+</div>
+
+<table class="table table-bordered table-striped" ng-show="event.events">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Start Date</th>
+            <th>End Date</th>
+            <th>Event Type</th>
+            <th>Copay</th>
+            <th>Website</th>
+			<th class="col-sm-2"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="social in event.events">
+			<td>{{ social.name }}</td>
+			<td>{{ social.description }}</td>
+			<td>{{ social.start_date }}</td>
+            <td>{{ social.end_date }}</td>
+            <td>{{ social.event_type }}</td>
+            <td>{{ social.copay }}</td>
+            <td>{{ social.url }}</td>
+			<td class="col-sm-2">
+				<a ng-href="/events/{{ social._id }}" class="btn btn-danger">Edit</a>
+				<a href="#" ng-click="event.deleteEvent(social._id)" class="btn btn-primary">Delete</a>
+			</td>
+		</tr>
+	</tbody>
+</table>

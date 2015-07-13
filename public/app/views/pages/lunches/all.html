@@ -1,0 +1,39 @@
+<div class="page-header">
+	<h1>
+		Friday Lunch
+		<a href="/lunches/create" class="btn btn-default">
+			<span class="glyphicon glyphicon-plus"></span> 
+			New Friday Lunch
+		</a>
+	</h1>
+
+</div>
+
+<div class="jumbotron text-center" ng-show="lunch.processing">
+	<span class="glyphicon glyphicon-repeat spinner"></span>
+	<p>Loading Lunches...</p>
+</div>
+
+<table class="table table-bordered table-striped" ng-show="lunch.lunches">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Date</th>
+            <th>Food Type</th>
+			<th class="col-sm-2"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="meal in lunch.lunches">
+			<td>{{ meal.name }}</td>
+			<td>{{ meal.description }}</td>
+			<td>{{ meal.date }}</td>
+            <td>{{ meal.food_type}}</td>
+			<td class="col-sm-2">
+				<a ng-href="/lunches/{{ meal._id }}" class="btn btn-danger">Edit</a>
+				<a href="#" ng-click="lunch.deleteLunch(meal._id)" class="btn btn-primary">Delete</a>
+			</td>
+		</tr>
+	</tbody>
+</table>
