@@ -279,6 +279,91 @@ module.exports = function(app, express) {
 			});
 		});
 
+	// on routes that end in /lunches/:lunch_id/attendees
+	// ----------------------------------------------------
+	apiRouter.route('/lunches/:lunch_id/attendees')
+
+		// get the attendees for the lunch with that id
+		.get(function(req, res) {
+			// Get the list of attendees for the array
+			var query = Lunch.findById(req.params.lunch_id);
+			query.populate('attendees');
+			query.select('attendees');
+
+			query.exec(function(err, members) {
+				if (err) res.send(err);
+
+				res.json(members);
+			});
+		});
+
+	// on routes that end in /lunches/:lunch_id/attendees/:attendee_id
+	// ----------------------------------------------------------------
+	apiRouter.route('/lunches/:lunch_id/attendees/:attendee_id')
+		// update the attendees for the lunch with this id
+		.put(function(req, res) {
+			Lunch.findById(req.params.lunch_id, function(err, lunch) {
+
+				if (err) res.send(err);
+
+				var isAlreadyAttendee = lunch.attendees.some(function (userId) {
+    				return userId.equals(req.params.attendee_id);
+				});
+
+				if (req.params.attendee_id) {
+					if (isAlreadyAttendee) {
+						res.json({ message: "User already signed in"});
+					} else {
+						lunch.attendees.push(req.params.attendee_id);
+
+						// save the lunch
+						lunch.save(function(err) {
+							if (err) res.send(err);
+
+							// return the list of members
+							// return the list of members
+							var query = Lunch.findById(req.params.lunch_id);
+							query.populate('attendees');
+							query.select('attendees');
+
+							query.exec(function(err, members) {
+								if (err) res.send(err);
+
+								res.json(members);
+							});
+						});
+					}
+				}
+			});
+		})
+
+		// Remove lunch attendee from the current lunch
+		.delete(function(req, res) {
+			Lunch.findById(req.params.lunch_id, function(err, lunch) {
+
+				if (err) res.send(err);
+
+				if (req.params.attendee_id) lunch.attendees.pull(req.params.attendee_id);
+
+				// save the lunch
+				lunch.save(function(err) {
+					if (err) res.send(err);
+
+					// return the list of members
+					var query = Lunch.findById(req.params.lunch_id);
+					query.populate('attendees');
+					query.select('attendees');
+
+					query.exec(function(err, members) {
+						if (err) res.send(err);
+
+						res.json(members);
+					});
+				});
+
+			});
+		});
+
 	// on routes that end in /events
 	// ----------------------------------------------------
 	apiRouter.route('/events')

@@ -7,7 +7,7 @@ var EventSchema = new Schema({
     start_date: { type: Date, required: true, default: Date.now },
     end_date: {type: Date, required: true, default: Date.now },
     event_type: { type: String, required: true },
-    attendees: { type: [Schema.Types.ObjectId] },
+    attendees: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     copay: { type: Number, min: 0, default: 0 },
     url: { type: String }
 });

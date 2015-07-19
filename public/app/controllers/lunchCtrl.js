@@ -76,4 +76,47 @@ angular.module('lunchCtrl', ['lunchService'])
                     vm.message = data.message;
                 });
         };
+    })
+
+    .controller('lunchAttendeesController', function($routeParams, Lunch) {
+        
+        var vm = this;
+        vm.users = '';
+        vm.lunchAttendees = '';
+
+        vm.processing = true;
+
+        Lunch.getAllUsers()
+            .success(function(data) {
+                vm.users = data;
+            });
+
+        Lunch.getAttendees($routeParams.lunch_id)
+            .success(function(data) {
+                vm.processing = false;
+                vm.lunchAttendees = data.attendees;
+            });
+
+        vm.signInUser = function(userId) {
+            Lunch.addAttendee($routeParams.lunch_id, userId)
+                .success(function(data) {
+                    vm.lunchAttendees = data.attendees;
+                });
+        };
+
+        vm.signOutUser = function(userId) {
+            Lunch.deleteAttendee($routeParams.lunch_id, userId)
+                .success(function(data) {
+                    vm.lunchAttendees = data.attendees;
+                });
+        };
+
+        vm.isSignedIn = function(userId) {
+            for (var i = 0; i < vm.lunchAttendees.length; i++) {
+                if (vm.lunchAttendees[i]._id == userId) {
+                    return true;
+                }
+            }
+            return false;
+        };
     });

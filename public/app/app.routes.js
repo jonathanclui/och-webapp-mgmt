@@ -52,6 +52,12 @@ angular.module('app.routes', ['ngRoute'])
             controllerAs: 'lunch'
         })
 
+        .when('/lunches/:lunch_id/attendees', {
+            templateUrl: 'app/views/pages/lunches/attendees.html',
+            controller: 'lunchAttendeesController',
+            controllerAs: 'attendees'
+        })
+
         // EVENT ROUTES
         .when('/events', {
             templateUrl: 'app/views/pages/events/all.html',

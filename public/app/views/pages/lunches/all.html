@@ -30,9 +30,10 @@
 			<td>{{ meal.description }}</td>
 			<td>{{ meal.date }}</td>
             <td>{{ meal.food_type}}</td>
-			<td class="col-sm-2">
+			<td class="col-sm-3">
 				<a ng-href="/lunches/{{ meal._id }}" class="btn btn-danger">Edit</a>
 				<a href="#" ng-click="lunch.deleteLunch(meal._id)" class="btn btn-primary">Delete</a>
+				<a href="/lunches/{{ meal._id }}/attendees" class="btn btn-success">Manage Attendees</a>
 			</td>
 		</tr>
 	</tbody>

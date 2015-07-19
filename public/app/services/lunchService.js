@@ -23,5 +23,21 @@ angular.module('lunchService', [])
             return $http.delete('/api/lunches/' + id);
         };
 
+        lunchFactory.getAttendees = function(id) {
+            return $http.get('/api/lunches/' + id + '/attendees');
+        };
+
+        lunchFactory.addAttendee = function(id, attendeeId) {
+            return $http.put('/api/lunches/' + id + '/attendees/' + attendeeId);
+        };
+
+        lunchFactory.deleteAttendee = function(id, attendeeId) {
+            return $http.delete('api/lunches/' + id + '/attendees/' + attendeeId);
+        };
+
+        lunchFactory.getAllUsers = function() {
+            return $http.get('/api/users/');
+        };
+
         return lunchFactory;
     });
