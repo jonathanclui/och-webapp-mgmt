@@ -4,8 +4,10 @@ var bcrypt 		 = require('bcrypt-nodejs');
 
 // user schema 
 var UserSchema   = new Schema({
-	name: String,
-	username: { type: String, required: true, index: { unique: true }},
+	first: { type: String, required: true },
+	last: { type: String, required: true },
+	employeeId: { type: Number, unique: true },
+	email: { type: String, required: true, index: { unique: true }},
 	password: { type: String, required: true, select: false }
 });
 
@@ -32,5 +34,15 @@ UserSchema.methods.comparePassword = function(password) {
 
 	return bcrypt.compareSync(password, user.password);
 };
+
+UserSchema.virtual('fullname').get(function() {
+    return this.first + ' ' + this.last;
+});
+
+UserSchema.virtual('fullname').set(function (name) {
+  var split = name.split(' ');
+  this.first = split[0];
+  this.last = split[1];
+});
 
 module.exports = mongoose.model('User', UserSchema);

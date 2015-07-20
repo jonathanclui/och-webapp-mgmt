@@ -12,13 +12,49 @@ module.exports = function(app, express) {
 
 	var apiRouter = express.Router();
 
+	// route to generate sample user
+	apiRouter.post('/createUser', function(req, res) {
+
+		// look for the user already existing
+		User.findOne({ 'email': req.body.email }, function(err, user) {
+
+			// if there is no chris user, create one
+			if (!user) {
+				var newUser = new User();
+
+				newUser.first = req.body.first;
+				newUser.last = req.body.last;
+				newUser.email = req.body.email; 
+				newUser.employeeId = req.body.employeeId;
+				newUser.password = req.body.password;
+
+				newUser.save(function(err) {
+					if (err) res.send(err);
+
+					res.json({ 
+	      				success: true,
+	      				message: 'Please Check Your E-mail' 
+	      			});
+				});
+			} else {
+				// user already exists
+				res.json({
+					success: false,
+					message: 'User already exists'
+				});
+			}
+
+		});
+
+	});
+
 	// route to authenticate a user (POST http://localhost:8080/api/authenticate)
 	apiRouter.post('/authenticate', function(req, res) {
 
 	  // find the user
 	  User.findOne({
-	    username: req.body.username
-	  }).select('name username password').exec(function(err, user) {
+	    email: req.body.email
+	  }).select('first last email password').exec(function(err, user) {
 
 	    if (err) throw err;
 
@@ -42,8 +78,9 @@ module.exports = function(app, express) {
 	        // if user is found and password is right
 	        // create a token
 	        var token = jwt.sign({
-	        	name: user.name,
-	        	username: user.username
+	        	first: user.first,
+	        	last: user.last,
+	        	email: user.email
 	        }, superSecret, {
 	          expiresInMinutes: 1440 // expires in 24 hours
 	        });
@@ -101,10 +138,9 @@ module.exports = function(app, express) {
 	  }
 	});
 
-	// test route to make sure everything is working 
 	// accessed at GET http://localhost:8080/api
 	apiRouter.get('/', function(req, res) {
-		res.json({ message: 'hooray! welcome to our api!' });	
+		res.json({ message: 'welcome to our api!' });	
 	});
 
 	// on routes that end in /users
@@ -116,15 +152,17 @@ module.exports = function(app, express) {
 			
             // Create a new instance of the User Model
 			var user = new User();		
-			user.name = req.body.name;
-			user.username = req.body.username; 
+			user.first = req.body.first;
+			user.last = req.body.last;
+			user.email = req.body.email; 
+			if (req.body.employeeId) user.employeeId = req.body.employeeId;
 			user.password = req.body.password;
 
 			user.save(function(err) {
 				if (err) {
 					// duplicate entry
 					if (err.code == 11000) 
-						return res.json({ success: false, message: 'A user with that username already exists. '});
+						return res.json({ success: false, message: 'A user with that email already exists. '});
 					else 
 						return res.send(err);
 				}
@@ -167,8 +205,10 @@ module.exports = function(app, express) {
 				if (err) res.send(err);
 
 				// set the new user information if it exists in the request
-				if (req.body.name) user.name = req.body.name;
-				if (req.body.username) user.username = req.body.username;
+				if (req.body.first) user.first = req.body.first;
+				if (req.body.last) user.last = req.body.last;
+				if (req.body.email) user.email = req.body.email;
+				if (req.body.employeeId) user.employeeId = req.body.employeeId;
 				if (req.body.password) user.password = req.body.password;
 
 				// save the user
@@ -255,7 +295,6 @@ module.exports = function(app, express) {
 				if (req.body.description) lunch.description = req.body.description;
 				if (req.body.food_type) lunch.food_type = req.body.food_type;
 				if (req.body.date) lunch.date = req.body.date;
-				if (req.body.attendees) lunch.attendees = req.body.attendees;
 
 				// save the lunch
 				lunch.save(function(err) {
@@ -431,7 +470,6 @@ module.exports = function(app, express) {
 				if (req.body.food_type) event.food_type = req.body.food_type;
 				if (req.body.start_date) event.start_date = req.body.start_date;
                 if (req.body.end_date) event.end_date = req.body.end_date
-				if (req.body.attendees) event.attendees = req.body.attendees;
                 if (req.body.copay) event.copay = req.body.copay;
                 if (req.body.url) event.url = req.body.url;
 
@@ -454,6 +492,91 @@ module.exports = function(app, express) {
 				if (err) res.send(err);
 
 				res.json({ message: 'Successfully deleted' });
+			});
+		});
+
+	// on routes that end in /events/:event_id/attendees
+	// ----------------------------------------------------
+	apiRouter.route('/events/:event_id/attendees')
+
+		// get the attendees for the lunch with that id
+		.get(function(req, res) {
+			// Get the list of attendees for the array
+			var query = Event.findById(req.params.event_id);
+			query.populate('attendees');
+			query.select('attendees');
+
+			query.exec(function(err, members) {
+				if (err) res.send(err);
+
+				res.json(members);
+			});
+		});
+
+	// on routes that end in /events/:event_id/attendees/:attendee_id
+	// ----------------------------------------------------------------
+	apiRouter.route('/events/:event_id/attendees/:attendee_id')
+		// update the attendees for the event with this id
+		.put(function(req, res) {
+			Event.findById(req.params.event_id, function(err, event) {
+
+				if (err) res.send(err);
+
+				var isAlreadyAttendee = event.attendees.some(function (userId) {
+    				return userId.equals(req.params.attendee_id);
+				});
+
+				if (req.params.attendee_id) {
+					if (isAlreadyAttendee) {
+						res.json({ message: "User already signed in"});
+					} else {
+						event.attendees.push(req.params.attendee_id);
+
+						// save the lunch
+						event.save(function(err) {
+							if (err) res.send(err);
+
+							// return the list of members
+							// return the list of members
+							var query = Event.findById(req.params.event_id);
+							query.populate('attendees');
+							query.select('attendees');
+
+							query.exec(function(err, members) {
+								if (err) res.send(err);
+
+								res.json(members);
+							});
+						});
+					}
+				}
+			});
+		})
+
+		// Remove event attendee from the current event
+		.delete(function(req, res) {
+			Event.findById(req.params.event_id, function(err, event) {
+
+				if (err) res.send(err);
+
+				if (req.params.attendee_id) event.attendees.pull(req.params.attendee_id);
+
+				// save the lunch
+				event.save(function(err) {
+					if (err) res.send(err);
+
+					// return the list of members
+					var query = Event.findById(req.params.event_id);
+					query.populate('attendees');
+					query.select('attendees');
+
+					query.exec(function(err, members) {
+						if (err) res.send(err);
+
+						res.json(members);
+					});
+				});
+
 			});
 		});
 

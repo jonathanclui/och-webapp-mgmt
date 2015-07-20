@@ -6,16 +6,30 @@
 <form class="form-horizontal" ng-submit="user.saveUser()">
 	
 	<div class="form-group">
-		<label class="col-sm-2 control-label">Name</label>
+		<label class="col-sm-2 control-label">First Name</label>
 		<div class="col-sm-6">
-			<input type="text" class="form-control" ng-model="user.userData.name">
+			<input type="text" class="form-control" ng-model="user.userData.first">
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label class="col-sm-2 control-label">Username</label>
+		<label class="col-sm-2 control-label">Last Name</label>
 		<div class="col-sm-6">
-			<input type="text" class="form-control" ng-model="user.userData.username">
+			<input type="text" class="form-control" ng-model="user.userData.last">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Email</label>
+		<div class="col-sm-6">
+			<input type="text" class="form-control" ng-model="user.userData.email">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Employee Id</label>
+		<div class="col-sm-6">
+			<input type="text" class="form-control" ng-model="user.userData.employeeId">
 		</div>
 	</div>
 

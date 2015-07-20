@@ -76,4 +76,50 @@ angular.module('eventCtrl', ['eventService'])
                     vm.message = data.message;
                 });
         };
+    })
+
+    .controller('eventAttendeesController', function($routeParams, Event) {
+        
+        var vm = this;
+        vm.users = '';
+        vm.eventAttendees = '';
+
+        vm.processing = true;
+
+        Event.getAllUsers()
+            .success(function(data) {
+                vm.users = data;
+            });
+
+        Event.getAttendees($routeParams.event_id)
+            .success(function(data) {
+                vm.processing = false;
+                vm.eventAttendees = data.attendees;
+                vm.count = vm.eventAttendees.length;
+            });
+
+        vm.signInUser = function(userId) {
+            Event.addAttendee($routeParams.event_id, userId)
+                .success(function(data) {
+                    vm.eventAttendees = data.attendees;
+                    vm.count = vm.eventAttendees.length;
+                });
+        };
+
+        vm.signOutUser = function(userId) {
+            Event.deleteAttendee($routeParams.event_id, userId)
+                .success(function(data) {
+                    vm.eventAttendees = data.attendees;
+                    vm.count = vm.eventAttendees.length;
+                });
+        };
+
+        vm.isSignedIn = function(userId) {
+            for (var i = 0; i < vm.eventAttendees.length; i++) {
+                if (vm.eventAttendees[i]._id == userId) {
+                    return true;
+                }
+            }
+            return false;
+        };
     });

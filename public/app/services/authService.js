@@ -12,11 +12,11 @@ angular.module('authService', [])
 	var authFactory = {};
 
 	// log a user in
-	authFactory.login = function(username, password) {
+	authFactory.login = function(email, password) {
 
 		// return the promise object and its data
 		return $http.post('/api/authenticate', {
-			username: username,
+			email: email,
 			password: password
 		})
 			.success(function(data) {
@@ -46,6 +46,20 @@ angular.module('authService', [])
 			return $http.get('/api/me', { cache: true });
 		else
 			return $q.reject({ message: 'User has no token.' });		
+	};
+
+	authFactory.createUser = function(signupData) {
+		return $http.post('/api/createUser', {
+			first: signupData.first,
+			last: signupData.last,
+			employeeId: signupData.employeeId,
+			email: signupData.email,
+			password: signupData.password
+		})
+			.success(function(data) {
+				AuthToken.setToken(data.token);
+				return data;
+			});
 	};
 
 	// return auth factory object

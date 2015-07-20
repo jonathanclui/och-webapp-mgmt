@@ -23,5 +23,21 @@ angular.module('eventService', [])
             return $http.delete('/api/events/' + id);
         };
 
+        eventFactory.getAttendees = function(id) {
+            return $http.get('/api/events/' + id + '/attendees');
+        };
+
+        eventFactory.addAttendee = function(id, attendeeId) {
+            return $http.put('/api/events/' + id + '/attendees/' + attendeeId);
+        };
+
+        eventFactory.deleteAttendee = function(id, attendeeId) {
+            return $http.delete('api/events/' + id + '/attendees/' + attendeeId);
+        };
+
+        eventFactory.getAllUsers = function() {
+            return $http.get('/api/users/');
+        };
+
         return eventFactory;
     });

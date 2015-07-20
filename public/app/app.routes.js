@@ -13,6 +13,12 @@ angular.module('app.routes', ['ngRoute'])
    			controller  : 'mainController',
     		controllerAs: 'login'
 		})
+
+        .when('/create_account', {
+            templateUrl : 'app/views/pages/new_user.html',
+            controller  : 'mainController',
+            controllerAs: 'account'
+        })
 		
 		// USER ROUTES
 		.when('/users', {
@@ -75,6 +81,12 @@ angular.module('app.routes', ['ngRoute'])
             templateUrl: 'app/views/pages/events/single.html',
             controller: 'eventEditController',
             controllerAs: 'event'
+        })
+
+         .when('/events/:event_id/attendees', {
+            templateUrl: 'app/views/pages/events/attendees.html',
+            controller: 'eventAttendeesController',
+            controllerAs: 'attendees'
         });
 
 	$locationProvider.html5Mode(true);

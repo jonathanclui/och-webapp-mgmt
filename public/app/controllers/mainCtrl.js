@@ -25,7 +25,7 @@ angular.module('mainCtrl', [])
 		// clear the error
 		vm.error = '';
 
-		Auth.login(vm.loginData.username, vm.loginData.password)
+		Auth.login(vm.loginData.email, vm.loginData.password)
 			.success(function(data) {
 				vm.processing = false;			
 
@@ -42,7 +42,14 @@ angular.module('mainCtrl', [])
 		Auth.logout();
 		vm.user = '';
 		
-		$location.path('/login');
+		$location.path('/');
+	};
+
+	vm.createUser = function() {
+		Auth.createUser(vm.signupData)
+			.success(function(data) {
+				$location.path('/login');	
+			});
 	};
 
 });

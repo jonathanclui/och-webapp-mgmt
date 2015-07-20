@@ -95,12 +95,14 @@ angular.module('lunchCtrl', ['lunchService'])
             .success(function(data) {
                 vm.processing = false;
                 vm.lunchAttendees = data.attendees;
+                vm.count = vm.lunchAttendees.length;
             });
 
         vm.signInUser = function(userId) {
             Lunch.addAttendee($routeParams.lunch_id, userId)
                 .success(function(data) {
                     vm.lunchAttendees = data.attendees;
+                    vm.count = vm.lunchAttendees.length;
                 });
         };
 
@@ -108,6 +110,7 @@ angular.module('lunchCtrl', ['lunchService'])
             Lunch.deleteAttendee($routeParams.lunch_id, userId)
                 .success(function(data) {
                     vm.lunchAttendees = data.attendees;
+                    vm.count = vm.lunchAttendees.length;
                 });
         };
 

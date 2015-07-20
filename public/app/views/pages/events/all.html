@@ -36,9 +36,10 @@
             <td>{{ social.event_type }}</td>
             <td>{{ social.copay }}</td>
             <td>{{ social.url }}</td>
-			<td class="col-sm-2">
+			<td class="col-sm-4">
 				<a ng-href="/events/{{ social._id }}" class="btn btn-danger">Edit</a>
 				<a href="#" ng-click="event.deleteEvent(social._id)" class="btn btn-primary">Delete</a>
+				<a href="/events/{{ social._id }}/attendees" class="btn btn-success">Manage Attendees</a>
 			</td>
 		</tr>
 	</tbody>
